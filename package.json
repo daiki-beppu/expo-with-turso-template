@@ -8,13 +8,14 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "prettier --write . && expo lint --fix"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "babel-plugin-inline-import": "^3.0.0",
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",
     "expo": "~54.0.30",
@@ -47,6 +48,9 @@
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.4",
     "typescript": "~5.9.2"
   },
   "private": true
