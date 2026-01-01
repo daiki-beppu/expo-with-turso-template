@@ -19,7 +19,18 @@ export default function RootLayout() {
         },
       }}
       onInit={async (db: SQLiteDatabase) => {
-        await db.syncLibSQL();
+        // Turso環境変数が設定されている場合のみ同期
+        if (dbSettings.url && dbSettings.authToken) {
+          try {
+            await db.syncLibSQL();
+            console.log("Turso sync completed");
+          } catch (error) {
+            console.error("Turso sync failed:", error);
+            // 同期失敗してもアプリは続行（ローカルDBで動作）
+          }
+        } else {
+          console.log("Running in local-only mode (Turso credentials not set)");
+        }
       }}
     >
       <DrizzleProvider>
