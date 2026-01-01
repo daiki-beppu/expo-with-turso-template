@@ -10,41 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 開発コマンド
 
-```bash
-# 開発サーバーを起動
-npm start
-# プラットフォーム別:
-npm run ios        # iOSシミュレーター
-npm run android    # Androidエミュレーター
-npm run web        # Webブラウザ
+開発コマンドとライブラリインストール方法については、`expo-turso-dev` スキル（`.claude/skills/expo-turso-dev`）を参照してください。
 
-# コードフォーマットとLint修正
-npm run lint
-
-# データベースマイグレーション生成（src/db/schema.ts修正後）
-npm run db:generate
-
-# キャッシュクリア（マイグレーションやビルドの問題時に有効）
-npx expo start -c
-
-# ライブラリインストール（バージョン互換性のためexpo installを使用）
-npx expo install <package-name>
-```
-
-## 依存関係のインストール
-
-**新しいライブラリを追加する際は、`npm install`や`yarn add`ではなく、必ず`npx expo install`を使用してください**。これにより、現在のExpo SDKとのバージョン互換性が保証されます：
-
-```bash
-# 正しい方法
-npx expo install react-native-maps
-
-# 避けるべき方法
-npm install react-native-maps
-yarn add react-native-maps
-```
-
-Expoのinstallコマンドは、SDKバージョン（~54.0.30）に基づいて互換性のあるバージョンを自動的に選択します。
+**重要**: ライブラリのインストールには必ず `npx expo install` を使用してください（`npm install` や `yarn add` は避ける）。
 
 ## アーキテクチャ
 
