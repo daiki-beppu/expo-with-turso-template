@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **ローカルモード**: SQLiteのみ、環境変数不要
 - **Tursoモード**: 認証情報が設定されている場合、ローカルSQLiteとTursoクラウドデータベースを同期
 
+**パッケージマネージャー**: このプロジェクトは`bun`を使用（`bun.lock`が存在）。開発コマンドは`@antfu/ni`を使用してパッケージマネージャーを自動検出します。詳細は`expo-turso-dev`スキルを参照。
+
 ## アーキテクチャ
 
 ### データベース層 - デュアルモード動作

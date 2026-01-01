@@ -9,30 +9,32 @@ Expo + Turso (LibSQL) + Drizzle ORMプロジェクトの開発コマンドと依
 
 ## 開発コマンド
 
+このプロジェクトは`@antfu/ni`を使用してパッケージマネージャー（npm/yarn/pnpm/bun）を自動検出します。
+
 ### 開発サーバーの起動
 
 ```bash
 # プラットフォーム選択付きで開発サーバーを起動
-npm start
+nr start
 
 # 特定のプラットフォームで起動
-npm run ios        # iOSシミュレーター
-npm run android    # Androidエミュレーター
-npm run web        # Webブラウザ
+nr ios        # iOSシミュレーター
+nr android    # Androidエミュレーター
+nr web        # Webブラウザ
 ```
 
 ### コード品質
 
 ```bash
 # コードフォーマットとLint修正
-npm run lint
+nr lint
 ```
 
 ### データベース操作
 
 ```bash
 # データベースマイグレーション生成（src/db/schema.ts修正後）
-npm run db:generate
+nr db:generate
 
 # マイグレーションは次回アプリ起動時に自動適用される
 # src/app/_layout.tsx内のDrizzleProviderによって実行
@@ -49,7 +51,7 @@ npx expo start -c
 
 **重要: ライブラリ追加時は必ず`npx expo install`を使用してください。**
 
-Expoのinstallコマンドは、プロジェクトのExpo SDKバージョン（~54.0.30）に基づいて互換性のあるバージョンを自動的に選択します。
+Expoのinstallコマンドは、プロジェクトのExpo SDKバージョン（~54.0.30）に基づいて互換性のあるバージョンを自動的に選択し、さらに使用中のパッケージマネージャー（このプロジェクトではbun）も自動検出します。
 
 ### 正しい方法
 
@@ -63,14 +65,18 @@ npx expo install react-native-maps
 ### 間違った方法（避けるべき）
 
 ```bash
-# ❌ npm installを使わない
+# ❌ パッケージマネージャーで直接インストールしない
 npm install react-native-maps
-
-# ❌ yarn addを使わない
 yarn add react-native-maps
+bun add react-native-maps
 ```
 
-**理由**: `npm install`や`yarn add`を直接使用すると、互換性のないパッケージバージョンがインストールされ、Expoビルドが壊れたりランタイムエラーが発生する可能性があります。`npx expo install`コマンドはSDKとの互換性を保証します。
+**理由**: パッケージマネージャーで直接インストールすると、互換性のないバージョンがインストールされ、Expoビルドが壊れたりランタイムエラーが発生する可能性があります。`npx expo install`コマンドはSDKとの互換性を保証します。
+
+## コマンドリファレンス
+
+- **`nr`**: スクリプト実行（`@antfu/ni`）- パッケージマネージャーを自動検出してnpm run/bun run等を実行
+- **`npx expo`**: Expo CLI - パッケージマネージャーとSDKバージョンを自動検出
 
 ## プロジェクトコンテキスト
 
