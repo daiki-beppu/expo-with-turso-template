@@ -8,12 +8,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **ローカルモード**: SQLiteのみ、環境変数不要
 - **Tursoモード**: 認証情報が設定されている場合、ローカルSQLiteとTursoクラウドデータベースを同期
 
-## 開発コマンド
-
-開発コマンドとライブラリインストール方法については、`expo-turso-dev` スキル（`.claude/skills/expo-turso-dev`）を参照してください。
-
-**重要**: ライブラリのインストールには必ず `npx expo install` を使用してください（`npm install` や `yarn add` は避ける）。
-
 ## アーキテクチャ
 
 ### データベース層 - デュアルモード動作
