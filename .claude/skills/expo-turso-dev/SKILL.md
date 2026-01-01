@@ -1,85 +1,85 @@
 ---
 name: expo-turso-dev
-description: Development commands and dependency management for Expo + Turso + Drizzle ORM projects. Use when asked about running the app, installing libraries, generating migrations, clearing cache, or any development workflow commands in this Expo project.
+description: Expo + Turso + Drizzle ORMプロジェクトの開発コマンドと依存関係管理。アプリの実行、ライブラリのインストール、マイグレーション生成、キャッシュクリア、またはこのExpoプロジェクトの開発ワークフローコマンドについて質問された時に使用。
 ---
 
 # Expo Turso Dev
 
-Quick reference for development commands and dependency management in Expo projects with Turso (LibSQL) and Drizzle ORM.
+Expo + Turso (LibSQL) + Drizzle ORMプロジェクトの開発コマンドと依存関係管理のクイックリファレンス。
 
-## Development Commands
+## 開発コマンド
 
-### Starting the Development Server
+### 開発サーバーの起動
 
 ```bash
-# Start development server with platform selector
+# プラットフォーム選択付きで開発サーバーを起動
 npm start
 
-# Start for specific platform
-npm run ios        # iOS simulator
-npm run android    # Android emulator
-npm run web        # Web browser
+# 特定のプラットフォームで起動
+npm run ios        # iOSシミュレーター
+npm run android    # Androidエミュレーター
+npm run web        # Webブラウザ
 ```
 
-### Code Quality
+### コード品質
 
 ```bash
-# Format code and fix linting issues
+# コードフォーマットとLint修正
 npm run lint
 ```
 
-### Database Operations
+### データベース操作
 
 ```bash
-# Generate database migrations (after modifying src/db/schema.ts)
+# データベースマイグレーション生成（src/db/schema.ts修正後）
 npm run db:generate
 
-# Migrations are automatically applied on next app launch
-# via DrizzleProvider in src/app/_layout.tsx
+# マイグレーションは次回アプリ起動時に自動適用される
+# src/app/_layout.tsx内のDrizzleProviderによって実行
 ```
 
-### Cache Management
+### キャッシュ管理
 
 ```bash
-# Clear Expo cache (useful for migration or build issues)
+# Expoキャッシュをクリア（マイグレーションやビルドの問題時に有効）
 npx expo start -c
 ```
 
-## Dependency Installation
+## 依存関係のインストール
 
-**Critical: Always use `npx expo install` for adding libraries.**
+**重要: ライブラリ追加時は必ず`npx expo install`を使用してください。**
 
-Expo's install command automatically selects compatible versions based on the project's Expo SDK version (~54.0.30).
+Expoのinstallコマンドは、プロジェクトのExpo SDKバージョン（~54.0.30）に基づいて互換性のあるバージョンを自動的に選択します。
 
-### Correct Method
+### 正しい方法
 
 ```bash
 npx expo install <package-name>
 
-# Example
+# 例
 npx expo install react-native-maps
 ```
 
-### Incorrect Methods (Avoid)
+### 間違った方法（避けるべき）
 
 ```bash
-# ❌ Don't use npm install
+# ❌ npm installを使わない
 npm install react-native-maps
 
-# ❌ Don't use yarn add
+# ❌ yarn addを使わない
 yarn add react-native-maps
 ```
 
-**Why**: Using `npm install` or `yarn add` directly may install incompatible package versions that break the Expo build or cause runtime errors. The `npx expo install` command ensures SDK compatibility.
+**理由**: `npm install`や`yarn add`を直接使用すると、互換性のないパッケージバージョンがインストールされ、Expoビルドが壊れたりランタイムエラーが発生する可能性があります。`npx expo install`コマンドはSDKとの互換性を保証します。
 
-## Project Context
+## プロジェクトコンテキスト
 
-This project uses:
-- **Expo Router**: File-based routing in `src/app/`
-- **Turso (LibSQL)**: Cloud database sync (optional, iOS/Android only)
-- **Drizzle ORM**: Type-safe database operations
-- **expo-sqlite**: Local SQLite database
+このプロジェクトで使用している技術:
+- **Expo Router**: `src/app/`でのファイルベースルーティング
+- **Turso (LibSQL)**: クラウドデータベース同期（オプション、iOS/Androidのみ）
+- **Drizzle ORM**: タイプセーフなデータベース操作
+- **expo-sqlite**: ローカルSQLiteデータベース
 
-Database operates in two modes:
-- **Local mode**: No environment variables required, SQLite only
-- **Turso mode**: When `EXPO_TURSO_DB_URL` and `EXPO_TURSO_DB_AUTH_TOKEN` are set, syncs with cloud
+データベースは2つのモードで動作:
+- **ローカルモード**: 環境変数不要、SQLiteのみ
+- **Tursoモード**: `EXPO_TURSO_DB_URL`と`EXPO_TURSO_DB_AUTH_TOKEN`が設定されている場合、クラウドと同期
