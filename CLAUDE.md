@@ -26,7 +26,25 @@ npm run db:generate
 
 # Clear cache (useful for migration or build issues)
 npx expo start -c
+
+# Install libraries (use expo install for version compatibility)
+npx expo install <package-name>
 ```
+
+## Installing Dependencies
+
+**Always use `npx expo install` instead of `npm install` or `yarn add`** when adding new libraries. This ensures version compatibility with the current Expo SDK:
+
+```bash
+# Correct
+npx expo install react-native-maps
+
+# Avoid
+npm install react-native-maps
+yarn add react-native-maps
+```
+
+Expo's install command automatically selects compatible versions based on your SDK version (~54.0.30).
 
 ## Architecture
 
