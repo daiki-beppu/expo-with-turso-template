@@ -2,135 +2,135 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## プロジェクト概要
 
-This is an Expo mobile app template that integrates Turso (LibSQL) for cloud database sync with Drizzle ORM. The app supports two modes:
-- **Local mode**: SQLite only, no environment variables required
-- **Turso mode**: Syncs local SQLite with Turso cloud database when credentials are set
+このプロジェクトは、Turso (LibSQL) を使用したクラウドデータベース同期とDrizzle ORMを統合したExpoモバイルアプリテンプレートです。アプリは2つのモードをサポートします：
+- **ローカルモード**: SQLiteのみ、環境変数不要
+- **Tursoモード**: 認証情報が設定されている場合、ローカルSQLiteとTursoクラウドデータベースを同期
 
-## Development Commands
+## 開発コマンド
 
 ```bash
-# Start development server
+# 開発サーバーを起動
 npm start
-# Or platform-specific:
-npm run ios        # iOS simulator
-npm run android    # Android emulator
-npm run web        # Web browser
+# プラットフォーム別:
+npm run ios        # iOSシミュレーター
+npm run android    # Androidエミュレーター
+npm run web        # Webブラウザ
 
-# Format code and fix linting issues
+# コードフォーマットとLint修正
 npm run lint
 
-# Generate database migrations (after modifying src/db/schema.ts)
+# データベースマイグレーション生成（src/db/schema.ts修正後）
 npm run db:generate
 
-# Clear cache (useful for migration or build issues)
+# キャッシュクリア（マイグレーションやビルドの問題時に有効）
 npx expo start -c
 
-# Install libraries (use expo install for version compatibility)
+# ライブラリインストール（バージョン互換性のためexpo installを使用）
 npx expo install <package-name>
 ```
 
-## Installing Dependencies
+## 依存関係のインストール
 
-**Always use `npx expo install` instead of `npm install` or `yarn add`** when adding new libraries. This ensures version compatibility with the current Expo SDK:
+**新しいライブラリを追加する際は、`npm install`や`yarn add`ではなく、必ず`npx expo install`を使用してください**。これにより、現在のExpo SDKとのバージョン互換性が保証されます：
 
 ```bash
-# Correct
+# 正しい方法
 npx expo install react-native-maps
 
-# Avoid
+# 避けるべき方法
 npm install react-native-maps
 yarn add react-native-maps
 ```
 
-Expo's install command automatically selects compatible versions based on your SDK version (~54.0.30).
+Expoのinstallコマンドは、SDKバージョン（~54.0.30）に基づいて互換性のあるバージョンを自動的に選択します。
 
-## Architecture
+## アーキテクチャ
 
-### Database Layer - Dual Mode Operation
+### データベース層 - デュアルモード動作
 
-The database initialization happens in **three cascading layers**:
+データベースの初期化は**3つのカスケード層**で行われます：
 
 1. **SQLiteProvider** (`src/app/_layout.tsx:13-34`)
-   - Initializes expo-sqlite with optional `libSQLOptions`
-   - In `onInit`: conditionally calls `db.syncLibSQL()` only if both `EXPO_TURSO_DB_URL` and `EXPO_TURSO_DB_AUTH_TOKEN` are set
-   - Wraps error handling so sync failures don't crash the app
-   - **Critical**: Turso sync is iOS/Android only - web platform doesn't support LibSQL
+   - オプションの`libSQLOptions`でexpo-sqliteを初期化
+   - `onInit`内: `EXPO_TURSO_DB_URL`と`EXPO_TURSO_DB_AUTH_TOKEN`の両方が設定されている場合のみ、条件付きで`db.syncLibSQL()`を呼び出す
+   - エラーハンドリングをラップし、同期失敗時もアプリをクラッシュさせない
+   - **重要**: Turso同期はiOS/Androidのみ - WebプラットフォームはLibSQLをサポートしない
 
 2. **DrizzleProvider** (`src/db/drizzle-provider.tsx`)
-   - Runs migrations using `useMigrations(db, migrations)`
-   - Blocks rendering (`return null`) until migrations complete
-   - Throws error if migrations fail
-   - Initializes Drizzle Studio via `useDrizzleStudio(expo)`
+   - `useMigrations(db, migrations)`でマイグレーションを実行
+   - マイグレーション完了まで描画をブロック（`return null`）
+   - マイグレーション失敗時はエラーをスロー
+   - `useDrizzleStudio(expo)`でDrizzle Studioを初期化
 
 3. **Database Instance** (`src/db/index.ts`)
-   - Exports raw `expo` SQLite connection: `openDatabaseSync("expo-turso-template.db")`
-   - Exports Drizzle-wrapped `db` instance for queries
+   - 生の`expo` SQLite接続をエクスポート: `openDatabaseSync("expo-turso-template.db")`
+   - クエリ用にDrizzleでラップされた`db`インスタンスをエクスポート
 
-**Key insight**: The app works locally without any Turso configuration. Environment variables enable cloud sync as an opt-in feature.
+**重要なポイント**: アプリはTurso設定なしでローカルで動作します。環境変数はオプトイン機能としてクラウド同期を有効にします。
 
-### Schema and Migrations
+### スキーマとマイグレーション
 
-- **Schema**: `src/db/schema.ts` defines tables using Drizzle's SQLite core
-- **Helpers**: `src/db/colmun-helper.ts` provides reusable column definitions:
-  - `id`: UUID primary key using `expo-crypto`'s `randomUUID()`
-  - `timestamps`: `createdAt` and `updatedAt` with auto-update logic
-- **Migrations**: Auto-generated in `src/db/migrations/` via `npm run db:generate`
-- **Config**: `drizzle.config.ts` specifies `dialect: "sqlite"` and `driver: "expo"`
+- **スキーマ**: `src/db/schema.ts`はDrizzleのSQLite coreを使用してテーブルを定義
+- **ヘルパー**: `src/db/colmun-helper.ts`は再利用可能なカラム定義を提供:
+  - `id`: `expo-crypto`の`randomUUID()`を使用したUUIDプライマリキー
+  - `timestamps`: 自動更新ロジック付きの`createdAt`と`updatedAt`
+- **マイグレーション**: `npm run db:generate`で`src/db/migrations/`に自動生成
+- **設定**: `drizzle.config.ts`は`dialect: "sqlite"`と`driver: "expo"`を指定
 
-**Migration workflow**:
-1. Edit `src/db/schema.ts`
-2. Run `npm run db:generate`
-3. Restart app - migrations auto-apply on next launch via DrizzleProvider
+**マイグレーションワークフロー**:
+1. `src/db/schema.ts`を編集
+2. `npm run db:generate`を実行
+3. アプリを再起動 - DrizzleProviderによって次回起動時にマイグレーションが自動適用
 
-### Routing
+### ルーティング
 
-Uses Expo Router (file-based routing):
-- `src/app/_layout.tsx` - Root layout with providers
-- `src/app/index.tsx` - Home screen
-- Add new routes by creating files in `src/app/`
+Expo Router（ファイルベースルーティング）を使用:
+- `src/app/_layout.tsx` - プロバイダーを含むルートレイアウト
+- `src/app/index.tsx` - ホーム画面
+- `src/app/`にファイルを作成して新しいルートを追加
 
-### Path Aliases
+### パスエイリアス
 
-TypeScript and Babel are configured with aliases:
+TypeScriptとBabelはエイリアスで設定されています:
 - `@/*` → `./src/*` (TypeScript + Babel)
-- `@db` → `./src/db` (Babel only)
+- `@db` → `./src/db` (Babelのみ)
 
-Use in imports: `import { db } from '@db'`
+インポートでの使用例: `import { db } from '@db'`
 
-## Environment Variables
+## 環境変数
 
-Optional. Only required for Turso cloud sync:
+オプションです。Tursoクラウド同期にのみ必要:
 
 ```env
 EXPO_TURSO_DB_URL=libsql://your-database-url.turso.io
 EXPO_TURSO_DB_AUTH_TOKEN=your-auth-token-here
 ```
 
-Reference `.env.example` for template.
+テンプレートは`.env.example`を参照してください。
 
-## Platform Considerations
+## プラットフォーム考慮事項
 
-- **iOS/Android**: Full Turso sync support
-- **Web**: Turso sync NOT supported (native-only feature). App will run in local-only mode on web regardless of env vars.
+- **iOS/Android**: Turso同期を完全サポート
+- **Web**: Turso同期は非サポート（ネイティブ専用機能）。環境変数に関係なく、Webではローカルオンリーモードでアプリが動作
 
-When adding database features, test on native platforms if using Turso sync.
+データベース機能を追加する際、Turso同期を使用する場合はネイティブプラットフォームでテストしてください。
 
-## Critical Implementation Notes
+## 重要な実装ノート
 
-### Database Sync Error Handling
+### データベース同期エラーハンドリング
 
-The `syncLibSQL()` call in `src/app/_layout.tsx` is wrapped in:
-1. Environment variable check (skip if not set)
-2. Try-catch block (log error but continue)
+`src/app/_layout.tsx`の`syncLibSQL()`呼び出しは以下でラップされています:
+1. 環境変数チェック（未設定の場合はスキップ）
+2. try-catchブロック（エラーをログ出力して続行）
 
-**Never** make sync required - the app must work offline/local-only. Sync is an enhancement, not a requirement.
+**絶対に**同期を必須にしないでください - アプリはオフライン/ローカルオンリーで動作する必要があります。同期は機能強化であり、要件ではありません。
 
-### Babel Plugin Configuration
+### Babelプラグイン設定
 
-The `babel-plugin-inline-import` with `.sql` extension support enables Drizzle migrations to work with Expo. Do not remove this plugin or migrations will break.
+`.sql`拡張子をサポートする`babel-plugin-inline-import`により、DrizzleマイグレーションがExpoで動作します。このプラグインを削除するとマイグレーションが壊れます。
 
-### TypeScript Strict Mode
+### TypeScript Strictモード
 
-This project uses `"strict": true` in tsconfig.json. All new code must comply with strict TypeScript checks.
+このプロジェクトはtsconfig.jsonで`"strict": true`を使用しています。すべての新しいコードは厳格なTypeScriptチェックに準拠する必要があります。
