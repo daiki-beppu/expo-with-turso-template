@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
+import { DrizzleProvider } from "../db/drizzle-provider";
 
 const dbSettings = {
   name: "expo-turso-template.db",
@@ -21,7 +22,9 @@ export default function RootLayout() {
         await db.syncLibSQL();
       }}
     >
-      <Stack />
+      <DrizzleProvider>
+        <Stack />
+      </DrizzleProvider>
     </SQLiteProvider>
   );
 }
